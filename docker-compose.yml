@@ -1,0 +1,45 @@
+version: '3.9'
+
+networks:
+  default:
+    name: web_net
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: add_gp_to_gp_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: add_group_telegram_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 1234@1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: on-failure
+
+  app:
+    build: .
+    container_name: add_gp_to_gp_bot
+    command: >
+      sh -c "python db.py &&
+             python run.py"
+    depends_on:
+      - db
+    environment:
+      - ADMINS=895067189,6075530225
+      - TOKEN=6945503838:AAGjr9jpt6zYQX6kZ5HHsHcdjC8WgqMU76Y
+      - DB_HOST=db
+      - DB_NAME=add_group_telegram_db
+      - DB_USER=admin
+      - DB_PASS=1234@1234
+      - DB_PORT=3306
+      - PYTHON_VERSION=python3
+    volumes:
+      - .:/app
+    restart: on-failure
+
+volumes:
+  db_data:
+
